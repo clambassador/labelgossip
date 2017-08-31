@@ -51,7 +51,7 @@ class Manager {
 
 		}
 		for (auto &x : _formats) {
-			_size_to_format[x->size()] = x.get();
+			_size_to_format.insert(make_pair(x->size(), x.get()));
 		}
 	}
 
@@ -62,10 +62,21 @@ class Manager {
 		}
 	}
 
+	virtual void save() {
+		int i = 0;
+		for (auto &x : _size_to_format) {
+			ofstream fout(
+				Logger::stringify("formats/fmt_%", i++));
+			// write format
+
+			// write packets
+		}
+	}
+
  protected:
 	map<Header, unique_ptr<Packet>> _packets;
 	vector<unique_ptr<Format>> _formats;
-	map<size_t, Format*> _size_to_format;
+	multimap<size_t, Format*> _size_to_format;
 };
 
 }  // namespace labelgossip
