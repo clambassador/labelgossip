@@ -4,12 +4,16 @@
 #include <set>
 #include <string>
 
+#include "ib/marshalled.h"
+
 using namespace std;
+using namespace ib;
 
 namespace labelgossip {
 
 class Packet {
- public:
+public:
+	Packet() {}
 	Packet(Header header) : _header(header) {}
 
 	virtual	~Packet() {}
@@ -50,7 +54,19 @@ class Packet {
 		return _key_value;
 	}
 
- protected:
+	virtual void marshal(Marshalled *m) const {
+		Logger::info("marshal packet");
+		m->push(_header);
+		m->push(_key_value);
+	}
+
+	virtual void demarshal(Marshalled *m) {
+		Logger::info("demarshal packet");
+		m->pull(&_header);
+		m->pull(&_key_value);
+	}
+
+protected:
 	map<string, string> _key_value;
 	Header _header;
 };

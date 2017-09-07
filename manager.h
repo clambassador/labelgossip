@@ -62,14 +62,38 @@ class Manager {
 		}
 	}
 
-	virtual void save() {
+	virtual void save(const string& dir) {
 		int i = 0;
 		for (auto &x : _size_to_format) {
 			ofstream fout(
-				Logger::stringify("formats/fmt_%", i++));
-			// write format
+				Logger::stringify("%/fmt_%", dir, i++));
+			Marshalled m(*x.second);
+			fout << m.str();
+		}
+	}
 
-			// write packets
+	virtual void load(const string& dir) {
+		vector<string> files;
+		Fileutil::list_directory(dir, &files);
+		for (auto &x : files) {
+			if (x.substr(0, 4) != "fmt_") continue;
+			string data;
+			string filename = Logger::stringify("%/%", dir, x);
+			Fileutil::read_file(filename, &data);
+			Logger::info("data: % file %", data.length(), x);
+			Marshalled m;
+			m.data(data);
+			_formats.push_back(nullptr);
+			_formats.back().reset(new Format());
+			m.pull(_formats.back().get());
+
+			const vector<Packet*>& packets =
+			    _formats.back()->get_packets();
+			_size_to_format.insert(make_pair(
+				packets.size(), _formats.back().get()));
+			for (const auto& x : packets) {
+				_packets[x->get_header()].reset(x);
+			}
 		}
 	}
 

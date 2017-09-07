@@ -20,5 +20,6 @@ int main(int argc, char** argv) {
 	csv.load(argv[1]);
 	mgr.set_data(csv);
 	mgr.find_formats();
+	mgr.save("formats");
 	mgr.trace();
 }

@@ -3,7 +3,10 @@
 
 #include <string>
 
+#include "ib/marshalled.h"
+
 using namespace std;
+using namespace ib;
 
 namespace labelgossip {
 
@@ -34,6 +37,24 @@ class Header {
 
 	virtual string dest() const {
 		return _dest;
+	}
+
+	virtual void marshal(Marshalled* m) const {
+		m->push(_app);
+		m->push(_version);
+		m->push(_hwid);
+		m->push(_dest);
+		m->push(_tls);
+		m->push(_digest);
+	}
+
+	virtual void demarshal(Marshalled* m) {
+		m->pull(&_app);
+		m->pull(&_version);
+		m->pull(&_hwid);
+		m->pull(&_dest);
+		m->pull(&_tls);
+		m->pull(&_digest);
 	}
 
  protected:

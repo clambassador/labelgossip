@@ -48,6 +48,22 @@ class Format {
 		return Logger::stringify("%,%", _dests, _keys);
 	}
 
+	virtual void demarshal(Marshalled *m) {
+		m->pull(&_keys);
+		m->pull(&_dests);
+		m->pull(&_packets);
+	}
+
+	virtual void marshal(Marshalled *m) const {
+		m->push(_keys);
+		m->push(_dests);
+		m->push(_packets);
+	}
+
+	virtual const vector<Packet*>& get_packets() const {
+		return _packets;
+	}
+
  protected:
 	set<string> _keys;
 	set<string> _dests;

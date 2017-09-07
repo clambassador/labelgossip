@@ -10,7 +10,8 @@ for i in range(0, 5):
     print ""
 
 mains = dict()
-mains['main.cc'] = 'labelgossip'
+mains['build.cc'] = 'build'
+mains['view.cc'] = 'view'
 
 libs = Split("""pthread
 		crypto
