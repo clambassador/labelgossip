@@ -55,13 +55,11 @@ public:
 	}
 
 	virtual void marshal(Marshalled *m) const {
-		Logger::info("marshal packet");
 		m->push(_header);
 		m->push(_key_value);
 	}
 
 	virtual void demarshal(Marshalled *m) {
-		Logger::info("demarshal packet");
 		m->pull(&_header);
 		m->pull(&_key_value);
 	}
