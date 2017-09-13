@@ -97,6 +97,10 @@ class Manager {
 		}
 	}
 
+        virtual const multimap<size_t, Format*>& get_formats() const {
+                return _size_to_format;
+        }
+
  protected:
 	map<Header, unique_ptr<Packet>> _packets;
 	vector<unique_ptr<Format>> _formats;

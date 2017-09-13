@@ -1,0 +1,66 @@
+<html>
+
+<head>
+<body>
+<select onchange="set_format()" id="fmts">
+%%options%%
+</select>
+
+<table id="keys">
+</table>
+<br><br><br><br>
+<table id="dests">
+</table>
+<script>
+
+function http_get(url) {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.overrideMimeType('text/plain');
+    xmlhttp.open("GET", url, false);
+    xmlhttp.send(null);
+    return xmlhttp.responseText;
+}
+
+function fresh() {
+		return "t=" + new Date().getTime();
+}
+
+function set_format() {
+    var sel = document.getElementById("fmts");
+
+    http_get('/%%cid%%/set/format?val=' + sel.selectedIndex + '&' +  fresh());
+    build_table('keys');
+    build_table('dests');
+    build_range();
+}
+
+function build_range() {
+    var t = document.getElementById('keys');
+    for (var i = 0; i < t.rows.length; ++i) {
+      var r = t.rows[i];
+      var key = r.cells[0].innerHTML;
+      p = http_get('/%%cid%%/get/range?key=' + key + '&' + fresh()).split('\n');
+      for (var j = 0; j < p.length; ++j) {
+        r.insertCell(j + 1).innerHTML= p[j];
+      }
+   }
+}
+
+function build_table(name) {
+    l = http_get('/%%cid%%/get/' + name + '?' + fresh()).split('\n');
+    var t = document.getElementById(name);
+    n = t.rows.length;
+    for (var i = n - 1; i > 0; --i) {
+      t.deleteRow(i)
+    }
+    for (var i = 0; i < l.length; ++i) {
+      var r = t.insertRow(i);
+      r.insertCell(0).innerHTML= l[i];
+    }
+}
+
+</script>
+
+
+</body>
+</html>

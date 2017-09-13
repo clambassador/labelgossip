@@ -32,7 +32,15 @@ public:
 		_key_value[key] = value;
 	}
 
-	virtual bool match(map<string, string> fix) const {
+	virtual bool match(const Range& range) const {
+		for (auto &x : _key_value) {
+			if (!range.match(x.first, x.second))
+				return false;
+		}
+		return true;
+	}
+
+	virtual bool match(const map<string, string>& fix) const {
 		for (auto &x : fix) {
 			if (!_key_value.count(x.first) ||
 			    _key_value.at(x.first) != x.second) {

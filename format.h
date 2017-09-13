@@ -19,8 +19,17 @@ class Format {
 	virtual ~Format() {}
 
 	virtual void get_range(Range* range) {
+		get_range(range, Range());
+	}
+
+	virtual void get_range(Range* range, const Range& fixed) {
 		for (auto &x : _packets) {
-			range->grow(x->get());
+			if (x->match(fixed)) {
+				range->grow(x->get());
+			} else {
+				assert(0); // todo for now
+			}
+			
 		}
 	}
 
@@ -38,6 +47,10 @@ class Format {
 
 	virtual size_t size() const {
 		return _packets.size();
+	}
+
+	virtual const set<string> dests() const {
+		return _dests;
 	}
 
 	virtual const set<string> keys() const {
