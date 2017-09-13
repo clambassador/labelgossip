@@ -105,14 +105,12 @@ public:
 		}
 		if (name == "range") {
 			stringstream ss;
-			for (const auto &x :
-			     _cid_to_range[cid]->range(arguments.at("key"))) {
+			const auto &range =
+			    _cid_to_range[cid]->range(arguments.at("key"));
+			for (const auto &x : range) {
 				ss << x << endl;
 			}
 			*output = ss.str();
-			Logger::info("got the range for % is %",
-				     arguments.at("key"),
-				     _cid_to_range[cid]->range(arguments.at("key")));
 			return true;
 		}
 		if (name == "screen") {

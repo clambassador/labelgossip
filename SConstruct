@@ -14,7 +14,6 @@ mains['build.cc'] = 'build'
 mains['view.cc'] = 'view'
 
 libs = Split("""pthread
-		crypto
 		microhttpd
 	     """)
 env = Environment(CXX="ccache clang++ -I"+ PATH_TO_IB, CPPFLAGS="-D_FILE_OFFSET_BITS=64 -Wall -g --std=c++11 -pthread", LIBS=libs, CPPPATH=PATH_TO_IB)

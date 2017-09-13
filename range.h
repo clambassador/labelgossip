@@ -21,7 +21,6 @@ class Range {
 	}
 
 	virtual const set<string>& range(const string& key) const {
-		Logger::info("range  % %", key, _key_to_values);
 		if (!_key_to_values.count(key)) return _null;
 		return _key_to_values.at(key);
 	}
