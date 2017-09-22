@@ -2,16 +2,39 @@
 
 <head>
 <body>
+<h1>List of observed packet formats</h1>
 <select onchange="set_format()" id="fmts">
-%%options%%
 </select>
+<input type="text" id="grep">
+<input type="button" value="Filter Dests" id="send_grep" onclick="do_grep()">
 
+<h1>Key-value pairs that appear in the format</h1>
 <table id="keys">
 </table>
-<br><br><br><br>
+<br><br>
+<h1>Destinations address where packets of this format are send</h1>
 <table id="dests">
 </table>
 <script>
+
+function get_formats() {
+  var opts = document.getElementById('fmts');
+  opts.options.length = 0;
+  l = http_get('/%%cid%%/get/opts?' + fresh()).split('\n');
+  for (var j = 0; j < p.length - 1; ++j) {
+    opts.add(new Option(p[j]));
+  }
+  opts.selectedIndex = 0;
+  set_format();
+}
+
+get_formats();
+
+function do_grep() {
+  var text = document.getElementById("grep");
+  http_get('/%%cid%%/set/grep?val=' + text.value + '&' + fresh());
+  get_formats();
+}
 
 function http_get(url) {
     var xmlhttp = new XMLHttpRequest();

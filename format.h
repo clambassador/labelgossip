@@ -1,6 +1,7 @@
 #ifndef __LABELGOSSIP__FORMAT__H__
 #define __LABELGOSSIP__FORMAT__H__
 
+#include <algorithm>
 #include <set>
 #include <string>
 #include <vector>
@@ -29,12 +30,25 @@ class Format {
 			} else {
 				assert(0); // todo for now
 			}
-			
 		}
 	}
 
 	virtual bool matches(const Packet& packet) const {
 		return (packet.keys_match(_keys));
+	}
+
+	virtual bool matches_dest(const string& dest) const {
+		if (dest.empty()) return true;
+		for (const auto &x : _dests) {
+			auto it = search(x.begin(), x.end(),
+					 dest.begin(), dest.end(),
+					 [](char ch1, char ch2) {
+						return toupper(ch1) ==
+						       toupper(ch2);
+					});
+			if (it != x.end()) return true;
+		}
+		return false;
 	}
 
 	virtual void add(Packet* packet) {

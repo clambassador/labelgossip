@@ -41,7 +41,7 @@ public:
 		        if (it->first < 10) break;
 			string name = Logger::stringify(
 			    "% (% apps)", i++, it->first);
-			_fmts.push_back(make_pair(name, it->second));
+			_fmts[name] =  it->second;
 		}
 	}
 
@@ -51,7 +51,6 @@ public:
 	                      string* output) {
                 BasePropertyPage bpp;
 		bpp.set("cid", cid);
-		bpp.set("options", get_format_list());
 		*output = _node.get()->display(&bpp);
 	}
 
@@ -65,12 +64,20 @@ public:
 			       const string& name,
 			       const vector<string>& parameters,
 			       const map<string, string>& arguments) {
+		if (name == "grep") {
+			string grep = arguments.at("val").c_str();
+			Logger::info("cid % to grep on %", cid, grep);
+			set_grep(cid, grep);
+			return true;
+		}
 		if (name == "format") {
 			size_t number = atoi(arguments.at("val").c_str());
 			Logger::info("cid % to use %", cid, number);
 
-			if (number < _fmts.size()) {
-				_cid_to_format[cid] = _fmts[number].second;
+			if (number < _cid_to_format_list[cid].size()) {
+				string format_name =
+				    _cid_to_format_list[cid][number];
+				_cid_to_format[cid] = _fmts[format_name];
 				_cid_to_format[cid]->get_range(_cid_to_range[cid].get());
 			} else {
 				_cid_to_format[cid] = nullptr;
@@ -113,10 +120,11 @@ public:
 			*output = ss.str();
 			return true;
 		}
-		if (name == "screen") {
-			return true;
-		}
-		if (name == "format") {
+		if (name == "opts") {
+			stringstream ss;
+			for (const auto &x : _cid_to_format_list.at(cid)) {
+				ss << x << endl;
+			}
 			return true;
 		}
 		Logger::error("unknown value %", name);
@@ -149,6 +157,7 @@ public:
 	virtual void new_client(const ClientID& cid) {
 		_cid_to_format[cid] = nullptr;
 		_cid_to_range[cid].reset(new Range());
+		set_grep(cid, "");
 	}
 
 	virtual void bye_client(const ClientID& cid) {
@@ -156,25 +165,24 @@ public:
 	}
 
 protected:
+	virtual void set_grep(const ClientID& cid, const string& grep) {
+		_cid_to_format_list[cid].clear();
+		for (auto &x : _fmts) {
+			if (x.second->matches_dest(grep)) {
+				_cid_to_format_list[cid].push_back(x.first);
+			}
+		}
+	}
+
 	virtual void cleanup(const ClientID& cid) {
 		_cid_to_format.erase(cid);
 		_cid_to_range.erase(cid);
 	}
 
-	virtual string get_format_list() const {
-		stringstream ss;
-
-		for (const auto& x: _fmts) {
-			ss << "<option>" << x.first << "</option>"
-			   << endl;
-		}
-		Logger::error("%", ss.str());
-		return ss.str();
-	}
-
 	map<ClientID, Format*> _cid_to_format;
+	map<ClientID, vector<string>> _cid_to_format_list;
 	map<ClientID, unique_ptr<Range>> _cid_to_range;
-	vector<pair<string, Format*>> _fmts;
+	map<string, Format*> _fmts;
 
 	unique_ptr<ScaffoldNode> _node;
 };
