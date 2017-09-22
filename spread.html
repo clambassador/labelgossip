@@ -5,7 +5,8 @@
 <h1>List of observed packet formats</h1>
 <select onchange="set_format()" id="fmts">
 </select>
-<input type="text" id="grep">
+<input type="text" id="grep" onkeydown="if (event.keyCode == 13) {do_grep();
+return false; }">
 <input type="button" value="Filter Dests" id="send_grep" onclick="do_grep()">
 
 <h1>Key-value pairs that appear in the format</h1>
