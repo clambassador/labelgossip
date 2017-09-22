@@ -40,7 +40,7 @@ public:
 		     it != fmts.rend(); ++it) {
 		        if (it->first < 10) break;
 			string name = Logger::stringify(
-			    "% (% apps)", i++, it->first);
+			    "% (% packets)", i++, it->first);
 			_fmts[name] =  it->second;
 		}
 	}
@@ -66,13 +66,11 @@ public:
 			       const map<string, string>& arguments) {
 		if (name == "grep") {
 			string grep = arguments.at("val").c_str();
-			Logger::info("cid % to grep on %", cid, grep);
 			set_grep(cid, grep);
 			return true;
 		}
 		if (name == "format") {
 			size_t number = atoi(arguments.at("val").c_str());
-			Logger::info("cid % to use %", cid, number);
 
 			if (number < _cid_to_format_list[cid].size()) {
 				string format_name =
@@ -92,6 +90,14 @@ public:
 			       const vector<string>& parameters,
 			       const map<string, string>& arguments,
 			       string* output) {
+		if (name == "opts") {
+			stringstream ss;
+			for (const auto &x : _cid_to_format_list.at(cid)) {
+				ss << x << endl;
+			}
+			*output = ss.str();
+			return true;
+		}
 		if (!_cid_to_format[cid]) return false;
 		if (name == "dests") {
 			stringstream ss;
@@ -107,7 +113,6 @@ public:
 				ss << x << endl;
 			}
 			*output = ss.str();
-			Logger::info("%", *output);
 			return true;
 		}
 		if (name == "range") {
@@ -118,13 +123,6 @@ public:
 				ss << x << endl;
 			}
 			*output = ss.str();
-			return true;
-		}
-		if (name == "opts") {
-			stringstream ss;
-			for (const auto &x : _cid_to_format_list.at(cid)) {
-				ss << x << endl;
-			}
 			return true;
 		}
 		Logger::error("unknown value %", name);
@@ -168,6 +166,7 @@ protected:
 	virtual void set_grep(const ClientID& cid, const string& grep) {
 		_cid_to_format_list[cid].clear();
 		for (auto &x : _fmts) {
+
 			if (x.second->matches_dest(grep)) {
 				_cid_to_format_list[cid].push_back(x.first);
 			}

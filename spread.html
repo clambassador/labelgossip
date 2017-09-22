@@ -21,8 +21,8 @@ function get_formats() {
   var opts = document.getElementById('fmts');
   opts.options.length = 0;
   l = http_get('/%%cid%%/get/opts?' + fresh()).split('\n');
-  for (var j = 0; j < p.length - 1; ++j) {
-    opts.add(new Option(p[j]));
+  for (var j = 0; j < l.length - 1; ++j) {
+    opts.add(new Option(l[j]));
   }
   opts.selectedIndex = 0;
   set_format();
