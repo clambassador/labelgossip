@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 	Config::_()->load("labelgossip.cfg");
 
 	Manager mgr;
-	mgr.load("formats");
+	mgr.load("formats_merged");
 
 	LabelgossipWeb lw;
 	lw.init(mgr);

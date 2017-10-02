@@ -41,7 +41,8 @@ public:
 		        if (it->first < 10) break;
 			string name = Logger::stringify(
 			    "% (% packets)", i++, it->first);
-			_fmts[name] =  it->second;
+			_fmts[name] = it->second;
+			_sorted_formats.push_back(make_pair(name, it->second));
 		}
 	}
 
@@ -165,8 +166,7 @@ public:
 protected:
 	virtual void set_grep(const ClientID& cid, const string& grep) {
 		_cid_to_format_list[cid].clear();
-		for (auto &x : _fmts) {
-
+		for (auto &x : _sorted_formats) {
 			if (x.second->matches_dest(grep)) {
 				_cid_to_format_list[cid].push_back(x.first);
 			}
@@ -182,6 +182,7 @@ protected:
 	map<ClientID, vector<string>> _cid_to_format_list;
 	map<ClientID, unique_ptr<Range>> _cid_to_range;
 	map<string, Format*> _fmts;
+	vector<pair<string, Format*>> _sorted_formats;
 
 	unique_ptr<ScaffoldNode> _node;
 };
