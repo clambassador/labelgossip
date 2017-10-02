@@ -50,8 +50,15 @@ class Manager {
 			}
 
 		}
+		resize();
+	}
+
+	virtual void resize() {
+		_size_to_format.clear();
 		for (auto &x : _formats) {
-			_size_to_format.insert(make_pair(x->size(), x.get()));
+			if (x.get()) {
+				_size_to_format.insert(make_pair(x->size(), x.get()));
+			}
 		}
 	}
 
@@ -100,6 +107,56 @@ class Manager {
         virtual const multimap<size_t, Format*>& get_formats() const {
                 return _size_to_format;
         }
+
+	virtual void merge() {
+		map<Format*, set<Format*>> subset, superset;
+		map<Format*, Format*> mergeset;
+		size_t i = 0;
+
+		for (auto &x : _formats) {
+			for (auto &y : _formats) {
+				if (x->subseteq(y.get())) {
+					subset[x.get()].insert(y.get());
+					superset[y.get()].insert(x.get());
+				}
+			}
+			Logger::info("subset for % size %", ++i,
+				     subset[x.get()].size());
+		}
+		bool exit = false;
+		set<Format*> eraseset;
+		while (!exit) {
+			exit = true;
+			for (const auto &x : _formats) {
+				for (auto &y : eraseset) {
+					subset[x.get()].erase(y);
+				}
+				eraseset.clear();
+				if (subset[x.get()].size() == 2) {
+					for (const auto &y : subset[x.get()]) {
+						if (y == x.get()) continue;
+						mergeset[x.get()] = y;
+						eraseset.insert(y);
+						exit = false;
+					}
+					subset[x.get()].erase(x.get());
+				}
+			}
+		}
+		i = 0;
+		while (i < _formats.size()) {
+			Format *fmt = _formats[i].get();
+
+			if (mergeset.count(fmt)) {
+				mergeset[fmt]->merge_in(fmt);
+				_formats[i].reset(_formats.back().release());
+				_formats.pop_back();
+			} else {
+				++i;
+			}
+		}
+		resize();
+	}
 
  protected:
 	map<Header, unique_ptr<Packet>> _packets;

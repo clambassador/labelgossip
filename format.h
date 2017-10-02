@@ -91,6 +91,31 @@ class Format {
 		return _packets;
 	}
 
+	virtual bool subseteq(Format* other) const {
+		if (_keys.size() > other->_keys.size()) {
+			return false;
+		}
+		for (const auto& x : _keys) {
+			if (!other->_keys.count(x)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	virtual void merge_in(Format* other) {
+		assert(other->subseteq(this));
+		bool dest_match = false;
+		for (const auto& x : other->_dests) {
+			if (_dests.count(x)) dest_match = true;
+			_dests.insert(x);
+		}
+		for (const auto& x : other->_packets) {
+			_packets.push_back(x);
+		}
+		Logger::info("match %");
+	}
+
  protected:
 	set<string> _keys;
 	set<string> _dests;

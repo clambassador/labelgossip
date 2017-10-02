@@ -12,6 +12,7 @@ for i in range(0, 5):
 mains = dict()
 mains['build.cc'] = 'build'
 mains['view.cc'] = 'view'
+mains['merge.cc'] = 'merge'
 
 libs = Split("""pthread
 		microhttpd
