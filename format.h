@@ -113,7 +113,7 @@ class Format {
 		for (const auto& x : other->_packets) {
 			_packets.push_back(x);
 		}
-		Logger::info("match %");
+		Logger::info("match %", (int) dest_match);
 	}
 
  protected:
