@@ -77,11 +77,27 @@ public:
 				string format_name =
 				    _cid_to_format_list[cid][number];
 				_cid_to_format[cid] = _fmts[format_name];
-				_cid_to_format[cid]->get_range(_cid_to_range[cid].get());
+				_cid_to_format[cid]->get_range(
+				    _cid_to_range[cid].get(),
+				    *_cid_to_narrow[cid].get());
 			} else {
 				_cid_to_format[cid] = nullptr;
 			}
 			return true;
+		}
+		if (name == "narrow") {
+			if (parameters.size() < 2) return false;
+			string key = parameters[0];
+			string value = parameters[1];
+			if (value == "*") {
+				_cid_to_narrow[cid]->unnarrow(key);
+			} else {
+				_cid_to_narrow[cid]->narrow(key, value);
+			}
+			_cid_to_range[cid].reset(new Range());
+			_cid_to_format[cid]->get_range(
+				    _cid_to_range[cid].get(),
+				    *_cid_to_narrow[cid].get());
 		}
 		return false;
 	}
@@ -103,6 +119,7 @@ public:
 		if (name == "dests") {
 			stringstream ss;
 			for (const auto &x : _cid_to_format[cid]->dests()) {
+				Logger::info("TODO: filter by narrow");
 				ss << x << endl;
 			}
 			*output = ss.str();
@@ -114,6 +131,11 @@ public:
 				ss << x << endl;
 			}
 			*output = ss.str();
+			return true;
+		}
+		if (name == "narrowed") {
+			stringstream ss;
+			*output = _cid_to_narrow[cid]->get(arguments.at("key"));
 			return true;
 		}
 		if (name == "range") {
@@ -156,6 +178,7 @@ public:
 	virtual void new_client(const ClientID& cid) {
 		_cid_to_format[cid] = nullptr;
 		_cid_to_range[cid].reset(new Range());
+		_cid_to_narrow[cid].reset(new Range());
 		set_grep(cid, "");
 	}
 
@@ -176,10 +199,12 @@ protected:
 	virtual void cleanup(const ClientID& cid) {
 		_cid_to_format.erase(cid);
 		_cid_to_range.erase(cid);
+		_cid_to_narrow.erase(cid);
 	}
 
 	map<ClientID, Format*> _cid_to_format;
 	map<ClientID, vector<string>> _cid_to_format_list;
+	map<ClientID, unique_ptr<Range>> _cid_to_narrow;
 	map<ClientID, unique_ptr<Range>> _cid_to_range;
 	map<string, Format*> _fmts;
 	vector<pair<string, Format*>> _sorted_formats;

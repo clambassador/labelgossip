@@ -32,6 +32,19 @@ class Range {
 		return false;
 	}
 
+	virtual void unnarrow(const string& key) {
+		_key_to_values[key].clear();
+	}
+
+	virtual void narrow(const string& key, const string& value) {
+		_key_to_values[key].insert(value);
+	}
+
+	virtual string get(const string& key) {
+		if (!_key_to_values[key].size()) return "*";
+		return *_key_to_values[key].begin();
+	}
+
  protected:
 	map<string, set<string>> _key_to_values;
 	set<string> _null;

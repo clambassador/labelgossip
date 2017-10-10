@@ -28,7 +28,6 @@ class Format {
 			if (x->match(fixed)) {
 				range->grow(x->get());
 			} else {
-				assert(0); // todo for now
 			}
 		}
 	}
