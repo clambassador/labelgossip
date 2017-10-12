@@ -66,6 +66,14 @@ class Format {
 		return _dests;
 	}
 
+	virtual void filter_dests(const Range& fixed, set<string>* dests) const {
+		for (auto &x : _packets) {
+			if (x->match(fixed)) {
+				dests->insert(x->get_header().dest());
+			}
+		}
+	}
+
 	virtual const set<string> keys() const {
 		return _keys;
 	}
@@ -111,8 +119,10 @@ class Format {
 		}
 		for (const auto& x : other->_packets) {
 			_packets.push_back(x);
+			x->set_defaults(_keys);
 		}
-		Logger::info("match %", (int) dest_match);
+		Logger::info("Merged in % for %", other->_packets.size(),
+			     _keys);
 	}
 
  protected:

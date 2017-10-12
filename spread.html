@@ -68,10 +68,10 @@ function build_range() {
       var r = t.rows[i];
       var key = r.cells[0].innerHTML;
       p = http_get('/%%cid%%/get/range?key=' + key + '&' + fresh()).split('\n');
-      var data = '<select width=150px onchange="narrow_key(this.id, this.value)" id=' + key + ">";
+      var data = '<select onchange="narrow_key(this.id, this.value)" id=' + key + ">";
       data += "<option>*</option>";
       var selected = http_get('/%%cid%%/get/narrowed?key=' + key + '&' + fresh());
-
+      console.log('' + p);
       for (var j = 0; j < p.length - 1; ++j) {
         if (p[j] == selected) {
           data += '<option selected="selected">' + p[j] + "</option>";

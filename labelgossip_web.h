@@ -77,6 +77,7 @@ public:
 				string format_name =
 				    _cid_to_format_list[cid][number];
 				_cid_to_format[cid] = _fmts[format_name];
+				_cid_to_narrow[cid]->clear();
 				_cid_to_format[cid]->get_range(
 				    _cid_to_range[cid].get(),
 				    *_cid_to_narrow[cid].get());
@@ -118,8 +119,10 @@ public:
 		if (!_cid_to_format[cid]) return false;
 		if (name == "dests") {
 			stringstream ss;
-			for (const auto &x : _cid_to_format[cid]->dests()) {
-				Logger::info("TODO: filter by narrow");
+			set<string> dests;
+			_cid_to_format[cid]->filter_dests(
+				*_cid_to_narrow[cid].get(), &dests);
+			for (const auto &x : dests) {
 				ss << x << endl;
 			}
 			*output = ss.str();

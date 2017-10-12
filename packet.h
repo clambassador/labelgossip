@@ -72,6 +72,14 @@ public:
 		m->pull(&_key_value);
 	}
 
+	virtual void set_defaults(const set<string>& keys) {
+		for (const auto &x : keys) {
+			if (!_key_value.count(x)) {
+				_key_value[x] = "[ abs. ]";
+			}
+		}
+	}
+
 protected:
 	map<string, string> _key_value;
 	Header _header;

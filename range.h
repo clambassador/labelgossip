@@ -33,16 +33,23 @@ class Range {
 	}
 
 	virtual void unnarrow(const string& key) {
-		_key_to_values[key].clear();
+		_key_to_values.erase(key);
 	}
 
 	virtual void narrow(const string& key, const string& value) {
+		Logger::info("narrow % % %", key, value, _key_to_values);
 		_key_to_values[key].insert(value);
 	}
 
 	virtual string get(const string& key) {
-		if (!_key_to_values[key].size()) return "*";
+		if (!_key_to_values.count(key)
+		 || !_key_to_values[key].size())
+			return "*";
 		return *_key_to_values[key].begin();
+	}
+
+	virtual void clear() {
+		_key_to_values.clear();
 	}
 
  protected:
