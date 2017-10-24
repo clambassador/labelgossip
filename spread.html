@@ -7,7 +7,12 @@
 </select>
 <input type="text" id="grep" onkeydown="if (event.keyCode == 13) {do_grep();
 return false; }">
-<input type="button" value="Filter Dests" id="send_grep" onclick="do_grep()">
+<input type="button" value="Filter Dests" id="send_grep"
+onclick="do_grep()">&nbsp;
+<input type="text" id="grep_keys" onkeydown="if (event.keyCode == 13)
+{do_grep_keys(); return false; }">
+<input type="button" value="Filter Keys" id="send_grep_keys"
+onclick="do_grep_keys()">
 
 <h1>Key-value pairs that appear in the format</h1>
 <table id="keys">
@@ -30,6 +35,12 @@ function get_formats() {
 }
 
 get_formats();
+
+function do_grep_keys() {
+  var text = document.getElementById("grep_keys");
+  http_get('/%%cid%%/set/grep_keys?val=' + text.value + '&' + fresh());
+  get_formats();
+}
 
 function do_grep() {
   var text = document.getElementById("grep");

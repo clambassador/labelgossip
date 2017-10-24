@@ -70,6 +70,11 @@ public:
 			set_grep(cid, grep);
 			return true;
 		}
+		if (name == "grep_keys") {
+			string grep = arguments.at("val").c_str();
+			set_grep_keys(cid, grep);
+			return true;
+		}
 		if (name == "format") {
 			size_t number = atoi(arguments.at("val").c_str());
 
@@ -194,6 +199,15 @@ protected:
 		_cid_to_format_list[cid].clear();
 		for (auto &x : _sorted_formats) {
 			if (x.second->matches_dest(grep)) {
+				_cid_to_format_list[cid].push_back(x.first);
+			}
+		}
+	}
+
+	virtual void set_grep_keys(const ClientID& cid, const string& grep) {
+		_cid_to_format_list[cid].clear();
+		for (auto &x : _sorted_formats) {
+			if (x.second->matches_keys(grep)) {
 				_cid_to_format_list[cid].push_back(x.first);
 			}
 		}

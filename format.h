@@ -36,6 +36,20 @@ class Format {
 		return (packet.keys_match(_keys));
 	}
 
+	virtual bool matches_keys(const string& key) const {
+		if (key.empty()) return true;
+		for (auto &x: _keys) {
+			auto it = search(x.begin(), x.end(),
+                                         key.begin(), key.end(),
+                                         [](char ch1, char ch2) {
+                                                return toupper(ch1) ==
+                                                       toupper(ch2);
+                                        });
+                        if (it != x.end()) return true;
+		}
+		return false;
+	}
+
 	virtual bool matches_dest(const string& dest) const {
 		if (dest.empty()) return true;
 		for (const auto &x : _dests) {
