@@ -16,6 +16,11 @@ class Range {
 
 	virtual void grow(const map<string, string>& values) {
 		for (const auto &x : values) {
+			if (x.first == "coppa") {
+				Logger::info("grow coppa % %",
+					     _key_to_values[x.first],
+					     x.second);
+			}
 			_key_to_values[x.first].insert(x.second);
 		}
 	}

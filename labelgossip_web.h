@@ -43,6 +43,7 @@ public:
 			    "% (% packets)", i++, it->first);
 			_fmts[name] = it->second;
 			_sorted_formats.push_back(make_pair(name, it->second));
+			Logger::info("fmt % => %", i - 1, it->second->name());
 		}
 	}
 
@@ -83,6 +84,7 @@ public:
 				    _cid_to_format_list[cid][number];
 				_cid_to_format[cid] = _fmts[format_name];
 				_cid_to_narrow[cid]->clear();
+				_cid_to_range[cid].reset(new Range());
 				_cid_to_format[cid]->get_range(
 				    _cid_to_range[cid].get(),
 				    *_cid_to_narrow[cid].get());

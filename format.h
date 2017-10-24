@@ -17,7 +17,12 @@ namespace labelgossip {
 class Format {
  public:
 	Format() {}
+	Format(const string& filename) : _filename(filename) {}
 	virtual ~Format() {}
+
+	virtual string name() const {
+		return _filename;
+	}
 
 	virtual void get_range(Range* range) {
 		get_range(range, Range());
@@ -135,15 +140,16 @@ class Format {
 			_packets.push_back(x);
 			x->set_defaults(_keys);
 		}
-		Logger::info("Merged in % for %", other->_packets.size(),
-			     _keys);
+		Logger::info("Merged in % for % (matching dest %)",
+			     other->_packets.size(),
+			     _keys, dest_match);
 	}
 
  protected:
 	set<string> _keys;
 	set<string> _dests;
 	vector<Packet*> _packets;
-
+	string _filename;
 };
 
 }  // labelgossip

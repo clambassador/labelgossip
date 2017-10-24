@@ -45,7 +45,7 @@ class Manager {
 			}
 			if (!found) {
 				_formats.push_back(nullptr);
-				_formats.back().reset(new Format());
+				_formats.back().reset(new Format(""));
 				_formats.back()->add(x.second.get());
 			}
 
@@ -87,11 +87,10 @@ class Manager {
 			string data;
 			string filename = Logger::stringify("%/%", dir, *x);
 			Fileutil::read_file(filename, &data);
-			Logger::info("data: % file %", data.length(), *x);
 			Marshalled m;
 			m.data(data);
 			_formats.push_back(nullptr);
-			_formats.back().reset(new Format());
+			_formats.back().reset(new Format(filename));
 			m.pull(_formats.back().get());
 
 			const vector<Packet*>& packets =
@@ -125,6 +124,14 @@ class Manager {
 		}
 		bool exit = false;
 		set<Format*> eraseset;
+		for (const auto &x : _formats) {
+			if (superset[x.get()].size() > 80) {
+				Logger::info("super subset: %",
+					     x.get()->to_string());
+			}
+		}
+		// TODO: drop these highly tangled sets.
+
 		while (!exit) {
 			exit = true;
 			for (const auto &x : _formats) {
