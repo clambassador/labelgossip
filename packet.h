@@ -80,6 +80,12 @@ public:
 		}
 	}
 
+	virtual void keys_for_val(const string& val, set<string>* keys) const {
+		for (const auto &x : _key_value) {
+			if (x.second == val) keys->insert(x.first);
+		}
+	}
+
 protected:
 	map<string, string> _key_value;
 	Header _header;

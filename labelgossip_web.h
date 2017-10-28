@@ -67,12 +67,12 @@ public:
 			       const vector<string>& parameters,
 			       const map<string, string>& arguments) {
 		if (name == "grep") {
-			string grep = arguments.at("val").c_str();
+			string grep = arguments.at("val");
 			set_grep(cid, grep);
 			return true;
 		}
 		if (name == "grep_keys") {
-			string grep = arguments.at("val").c_str();
+			string grep = arguments.at("val");
 			set_grep_keys(cid, grep);
 			return true;
 		}
@@ -115,6 +115,19 @@ public:
 			       const vector<string>& parameters,
 			       const map<string, string>& arguments,
 			       string* output) {
+		if (name == "what_else") {
+			stringstream ss;
+			string arg = arguments.at("val");
+			set <string> names;
+			for (auto &x : _fmts) {
+				x.second->keys_for_val(arg, &names);
+			}
+			for (auto &x : names) {
+				ss << x << ", ";
+			}
+			*output = ss.str();
+			return true;
+		}
 		if (name == "opts") {
 			stringstream ss;
 			for (const auto &x : _cid_to_format_list.at(cid)) {

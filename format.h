@@ -24,6 +24,12 @@ class Format {
 		return _filename;
 	}
 
+	virtual void keys_for_val(string val, set<string>* keys) const {
+		for (const auto &x : _packets) {
+			x->keys_for_val(val, keys);
+		}
+	}
+
 	virtual void get_range(Range* range) {
 		get_range(range, Range());
 	}

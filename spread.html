@@ -13,7 +13,12 @@ onclick="do_grep()">&nbsp;
 {do_grep_keys(); return false; }">
 <input type="button" value="Filter Keys" id="send_grep_keys"
 onclick="do_grep_keys()">
-
+<br>
+<input type="text" id="what_keys" onkeydown="if (event.keyCode == 13)
+{do_what_keys(); return false; }">
+<input type="button" value="Other key names" id="send_what_keys"
+onclick="do_what_keys()"><br>
+<tt id="what_keys_result"></tt>
 <h1>Key-value pairs that appear in the format</h1>
 <table id="keys">
 </table>
@@ -22,6 +27,18 @@ onclick="do_grep_keys()">
 <table id="dests">
 </table>
 <script>
+
+function do_what_keys() {
+  var text = document.getElementById("what_keys");
+  var result = document.getElementById("what_keys_result");
+
+  p = http_get('/%%cid%%/get/what_else?val=' + text.value + '&' + fresh());
+  if (p.length > 0) p = p.substr(0, p.length - 2);
+  result.innerHTML = p;
+
+}
+
+
 
 function get_formats() {
   var opts = document.getElementById('fmts');
@@ -162,6 +179,12 @@ Similiarly, filtering for dests will only list formats for which we observed a
 packet heading to a particular destination. For example, filtering for facebook
 gives the list of formats where at least one packet headed to *facebook*, such
 as graph.facebook.com or staticxx.facebook.com.<br>
+<br>
+The next text field allows you to enter in a value, and get a list of all the
+different keys that match it. This means that if you find a value that looks
+like a random identifier, you can enter in here to see if another app has used
+that identifier under a different name to give you an understanding of its
+purpose.<br>
 <br>
 After you select a format, the table below lists all the keys in the format in
 the first column. The next column gives a drop-down list of all the different
