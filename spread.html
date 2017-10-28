@@ -119,6 +119,63 @@ function narrow_key(key, value) {
 
 </script>
 
+<br><br>
+
+<h1> What is this and how does it work?</h1>
+
+This tool explores the space of API calls made by apps in our test set.<br>
+<br>
+First, it takes all of the observed packets in the run data directories, and
+turns it into a massive list of key-values. It applies the various decoding
+attempts, e.g., JSON, base64, and maps every packet into a list of (key, values)
+pairs for that packet. For example, if an http request had id=AAB,ts=35245, it
+would map that packet to [(id, AAB),(ts,35245)].<br>
+<br>
+Second, it then maps every packet's list of keys to a <i>format</i>. A format
+is just the list of keys that are send in a packet. The set of values can be
+different, but if two packets both have an <b>id</b> and <b>ts</b> field, then
+both those packets are grouped together as a single format. Keys are turned to
+lower case so both aaid and AAID are mapped together. The idea is that the
+packets give us an idea of the range of values for each key, and the packet
+format represents a particular remote API call.<br>
+<br>
+Now, with this list of formats, we do an addition merging pass. If there is a
+format F1 and F2, such that F1's keys are a subset of F2's keys, and F1 is not a
+subset of any other format, then the missing keys from F1 are deemed to be
+<i>optional parameters</i> and  the formats are merged. Them missing fields are
+made to say <b>[ abs. ]</b>. The tools merges 15 percent of formats. Note that
+the algorithm loops until it doesn't merge any, so if there is a F1 subset F2
+subset F3, then first F2 is merged, and then F1 is merged.<br>
+<br>
+This website now shows the results. It discards formats with fewer than 10
+packets that use it, and shows a list of observed packet formats. Each is given
+a number (e.g., 1) and the number of packets that we saw with that format (e.g.,
+1312), and so selecting <b>308 (93 packets)</b> means format id 308, with 93
+packets observed with it.<br>
+<br>
+To narrow the range of all packet formats, there are
+two filters we can use: filter dests and filter keys. To filter keys set the
+text and click the button. This will only list the packet formats such that one
+of the keys contains the filter. So filtering for 'coppa' will only list formats
+that have an explicit coppa-containing key, e.g., coppa, coppa_enabled.
+Similiarly, filtering for dests will only list formats for which we observed a
+packet heading to a particular destination. For example, filtering for facebook
+gives the list of formats where at least one packet headed to *facebook*, such
+as graph.facebook.com or staticxx.facebook.com.<br>
+<br>
+After you select a format, the table below lists all the keys in the format in
+the first column. The next column gives a drop-down list of all the different
+values we saw for that key in packets. The rest of the table displays this
+space of values in the row. If you select a particular value from a key's
+drop-down box, then it will rebuild this table but only using information from
+packets that have the value matching. So if you set coppa to true, it will then
+only show the space of possible values from packets where coppa was set to true.
+This allows you to see what values get affected by different settings.<br>
+<br>
+Finally, the list of destinations shows the different destination addresses
+where packets with this format were sent. This indicates the ad libraries.<br>
+<br>
+
 
 </body>
 </html>
