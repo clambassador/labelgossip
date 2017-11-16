@@ -19,17 +19,17 @@ class Manager {
 
 	virtual ~Manager() {}
 
-	virtual void set_data(const CSVTable& csv) {
-		size_t n = csv.rows();
-		for (size_t i = 0; i < n; ++i) {
-			vector<string> data;
-			csv.get_row(i, &data);
+	virtual void set_data(CSVTable* csv) {
+		vector<string> data;
+		while (csv->get_next_row(&data)) {
 			Header header(data[0], data[1], data[2],
-				      data[3], data[4], data[5]);
+				      data[3], data[4], data[5], data[6]);
 			if (!_packets.count(header)) {
 				_packets[header].reset(new Packet(header));
 			}
-			_packets[header]->add(data[6], data[7]);
+
+			_packets[header]->add(data[7], data[8]);
+			data.clear();
 		}
 	}
 
