@@ -151,6 +151,15 @@ class Format {
 			     _keys, dest_match);
 	}
 
+	virtual bool printable() const {
+		for (auto &x : _keys) {
+			for (auto &y : x) {
+				if (!isprint(y)) return false;
+			}
+		}
+		return true;
+	}
+
  protected:
 	set<string> _keys;
 	set<string> _dests;

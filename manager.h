@@ -119,8 +119,6 @@ class Manager {
 					superset[y.get()].insert(x.get());
 				}
 			}
-			Logger::info("subset for % size %", ++i,
-				     subset[x.get()].size());
 		}
 		bool exit = false;
 		set<Format*> eraseset;

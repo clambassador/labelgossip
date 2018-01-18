@@ -38,7 +38,8 @@ public:
 		int i = 0;
 		for (auto it = fmts.rbegin();
 		     it != fmts.rend(); ++it) {
-		        if (it->first < 10) break;
+		        if (it->first < 4) break;
+			if (!it->second->printable()) continue;
 			string name = Logger::stringify(
 			    "% (% packets)", i++, it->first);
 			_fmts[name] = it->second;

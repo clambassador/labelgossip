@@ -13,6 +13,7 @@ mains = dict()
 mains['build.cc'] = 'build'
 mains['view.cc'] = 'view'
 mains['merge.cc'] = 'merge'
+mains['pair.cc'] = 'pair'
 
 libs = Split("""pthread
 		microhttpd
