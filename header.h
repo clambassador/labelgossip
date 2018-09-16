@@ -60,7 +60,6 @@ class Header {
 		m->pull(&_digest);
 	}
 
- protected:
 	string _app;
 	string _version;
 	string _hwid;

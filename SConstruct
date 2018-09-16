@@ -14,6 +14,7 @@ mains['build.cc'] = 'build'
 mains['view.cc'] = 'view'
 mains['merge.cc'] = 'merge'
 mains['pair.cc'] = 'pair'
+mains['id_story.cc'] = 'id_story'
 
 libs = Split("""pthread
 		microhttpd
